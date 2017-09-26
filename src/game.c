@@ -3,6 +3,8 @@
 #include "gf2d_sprite.h"
 #include "simple_logger.h"
 
+#include "Entity.h"
+
 int main(int argc, char * argv[])
 {
     /*variable declarations*/
@@ -13,7 +15,11 @@ int main(int argc, char * argv[])
     int mx,my;
     float mf = 0;
     Sprite *mouse;
+	Sprite * spacebug; //added for testing sake
     Vector4D mouseColor = {255,100,255,200};
+	Entity temp; // this is my ENTITY
+
+	
     
     /*program initializtion*/
     init_logger("gf2d.log");
@@ -28,20 +34,39 @@ int main(int argc, char * argv[])
         0);
     gf2d_graphics_set_frame_delay(16);
     gf2d_sprite_init(1024);
+	gf2d_entity_system_init(100); //added, 100 entities is the max entities
     SDL_ShowCursor(SDL_DISABLE);
     
     /*demo setup*/
     sprite = gf2d_sprite_load_image("images/backgrounds/bg_flat.png");
     mouse = gf2d_sprite_load_all("images/pointer.png",32,32,16);
+
+	spacebug = gf2d_sprite_load_all("images/space_bug.png", 150, 150, 16);
+	
+	Ent_new(); // reserves space for an Entity  
+	temp.sprite = spacebug;
+	temp.inuse = 1;
+	
+	temp.position = vector2d(500, 500);
+	temp.frame = 0; // 
+	temp.scale = vector2d(1, 1);
+	temp.scaleCenter = vector2d(100, 100);
+	
+	
+	//Ent_draw(&temp);
+	
+
     /*main game loop*/
     while(!done)
     {
-        SDL_PumpEvents();   // update SDL's internal event structures
+        SDL_PumpEvents();   // update SDL's internal event structures user input(event)
         keys = SDL_GetKeyboardState(NULL); // get the keyboard state for this frame
         /*update things here*/
         SDL_GetMouseState(&mx,&my);
         mf+=0.1;
         if (mf >= 16.0)mf = 0;
+		temp.frame += 0.1;
+		if (temp.frame >= 144) temp.frame = 0;
         
         
         gf2d_graphics_clear_screen();// clears drawing buffers
@@ -59,12 +84,26 @@ int main(int argc, char * argv[])
                 NULL,
                 &mouseColor,
                 (int)mf);
-        gf2d_grahics_next_frame();// render current draw frame and skip to the next frame
         
+			Ent_draw(&temp);
+			
+			gf2d_sprite_draw(
+				spacebug,
+				vector2d(200, 200),
+				&temp.scale,
+				&temp.scaleCenter,
+				NULL,
+				NULL,
+				NULL,
+				temp.frame);
+			
+		
+		gf2d_grahics_next_frame();// render current draw frame and skip to the next frame
         if (keys[SDL_SCANCODE_ESCAPE])done = 1; // exit condition
         slog("Rendering at %f FPS",gf2d_graphics_get_frames_per_second());
     }
     slog("---==== END ====---");
     return 0;
+
 }
 /*eol@eof*/
