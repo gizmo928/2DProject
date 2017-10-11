@@ -55,10 +55,10 @@ Entity * Ent_new()
 	return NULL;
 }
 
-void Ent_free(Entity *self)
+void Entity_free(Entity *self)
 {
 	if (!self) return;
-	if (self->free) self->free(self); // what??
+//	if (self->free) self->free(self); // what??
 	memset(self, 0, sizeof(Entity)); // sets the value to 0 but still has a size of Entity?
 }
 
@@ -75,7 +75,7 @@ void Ent_draw(Entity *self)
 	&self->scaleCenter, 
 	NULL,
 	NULL,
-	NULL,
+	&self->color,
 	(Uint32) self->frame);
 	
 	/*
@@ -86,7 +86,18 @@ void Ent_draw(Entity *self)
 	*/
 }
 
+void Ent_update(Entity *self)
+{
+	if (self->dead != 0)
+	{
+		Entity_free(self);
+		return;
+	}
+	vector2d_add(self->position, self->position, self->velocity);// idk about this
 
+
+
+}
 
 
 

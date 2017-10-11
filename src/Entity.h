@@ -34,6 +34,7 @@ typedef struct Entity_s
 	void(*die)(struct Entity_s *self);
 	void(*free)(struct Entity_s *self);
 	float health;
+	int dead;
 
 }Entity;
 
@@ -47,5 +48,7 @@ void Entity_free(Entity *self); // returns an entity back to system for reycling
 
 
 void Ent_draw(Entity *self);// draw a single entity
+
+void Ent_Update(Entity *self);
 
 #endif
